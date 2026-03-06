@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Gastos | PortiFólio</title>
+  <title>Controle de Gastos | BuyBrazil10</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="/gastos.css">
+  <link rel="stylesheet" href="/style/gastos.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -13,411 +13,333 @@
 <body>
 
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-box">
-    <div class="loading-spinner"></div>
-    <span>Carregando dados...</span>
-  </div>
+  <div class="loading-box"><div class="loading-spin"></div><span>Carregando...</span></div>
 </div>
 
-<header class="header">
-  <div class="header-left">
-
-    <div class="header-brand">
-      <div class="header-brand-icon"><i class="fas fa-wallet"></i></div>
-      <div class="header-brand-name">Custo Fixo  <span>BuyBrasil10</span></div>
-    </div>
+<!-- ── HEADER ── -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-logo"><i class="fas fa-table"></i></div>
+    <div class="hdr-name">Controle de <span>Gastos</span></div>
   </div>
-  <div class="header-right">
-    <div class="profile-wrapper">
-      <div class="profile-mini" id="profileToggle">
-        <img id="headerAvatar" src="https://ui-avatars.com/api/?name=U&background=1d4ed8&color=fff" alt="Avatar">
-        <span class="profile-mini-name" id="headerName">Usuário</span>
-        <i class="fas fa-chevron-down profile-mini-chevron"></i>
-      </div>
-      <div class="profile-dropdown" id="profileDropdown">
-        <div class="pd-head">
-          <img id="dropdownAvatar" src="https://ui-avatars.com/api/?name=U&background=1d4ed8&color=fff" alt="">
-          <div class="pd-head-info">
-            <div class="pd-name" id="dropdownName">Usuário</div>
-            <div class="pd-email" id="dropdownEmail">email@exemplo.com</div>
+  <div class="hdr-right">
+    <div class="prof-wrap">
+      <button class="prof-btn" id="profBtn">
+        <img id="hdrAvatar" src="https://ui-avatars.com/api/?name=U&background=2563eb&color=fff" alt="">
+        <span class="prof-btn-name" id="hdrName">Usuário</span>
+        <i class="fas fa-chevron-down prof-btn-chev"></i>
+      </button>
+      <div class="prof-drop" id="profDrop">
+        <div class="prof-drop-head">
+          <img id="dropAvatar" src="https://ui-avatars.com/api/?name=U&background=2563eb&color=fff" alt="">
+          <div>
+            <div class="prof-drop-name" id="dropName">Usuário</div>
+            <div class="prof-drop-email" id="dropEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5e3b333f37321e3b333f3732703d3133">[email&#160;protected]</a></div>
           </div>
         </div>
-        <div class="pd-sep"></div>
-        <button class="pd-item" id="btnOpenEditor"><i class="fas fa-user-edit"></i> Editar Perfil</button>
-        <button class="pd-item accent-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i> Ir ao Portfólio</button>
-        <div class="pd-sep"></div>
-        <button class="pd-item danger" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Sair da Conta</button>
+        <div class="prof-drop-body">
+          <button class="prof-item" id="btnOpenProfile"><i class="fas fa-user-edit"></i> Editar Perfil</button>
+          <button class="prof-item accent" onclick="location.href='dashboard.html'"><i class="fas fa-home"></i> Ir ao Portfólio</button>
+          <div class="prof-sep"></div>
+          <button class="prof-item danger" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Sair da conta</button>
+        </div>
       </div>
     </div>
   </div>
 </header>
 
-<div class="modal-overlay" id="profileModal">
+<!-- ── MODAL: PERFIL ── -->
+<div class="modal-bg" id="profileModal">
   <div class="modal-box">
-    <div class="modal-header">
-      <h2>Editar Perfil</h2>
-      <button class="modal-close" id="btnCloseModal">&times;</button>
-    </div>
+    <div class="modal-pill"></div>
+    <div class="modal-head"><h2>Meu Perfil</h2><button class="modal-x" data-close="profileModal">&times;</button></div>
     <div class="modal-body">
-      <div class="mfield">
-        <label>Foto de Perfil</label>
-        <input type="file" id="avatarInput" accept="image/*">
+      <div class="avatar-wrap">
+        <img class="avatar-big" id="profileAvatarPreview" src="" alt="">
+        <div class="avatar-info">
+          <div class="avatar-name" id="profileDisplayName">—</div>
+          <div class="avatar-email" id="profileDisplayEmail">—</div>
+          <div class="avatar-since" id="profileSince">—</div>
+        </div>
       </div>
-      <div class="mfield">
-        <label>Nome</label>
-        <input type="text" id="editUsername" placeholder="Seu nome completo">
-      </div>
-      <div class="mfield">
-        <label>Bio</label>
-        <textarea id="editBio" placeholder="Breve descrição..."></textarea>
-      </div>
-      <button class="btn-save" id="btnSaveProfile">
-        <i class="fas fa-check"></i> Salvar Alterações
-      </button>
+      <div class="fld"><label>Foto de Perfil</label><input type="file" id="avatarInput" accept="image/*"></div>
+      <div class="fld"><label>Nome de usuário</label><input type="text" id="editUsername" placeholder="Seu nome"></div>
+      <div class="fld"><label>Bio</label><textarea id="editBio" placeholder="Uma breve descrição sobre você..."></textarea></div>
+      <button class="btn-primary" id="btnSaveProfile"><i class="fas fa-check"></i> Salvar Alterações</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="confirmModal">
-  <div class="modal-box modal-box-sm">
-    <div class="modal-header">
-      <h2 id="confirmTitle">Confirmar ação</h2>
-      <button class="modal-close" id="btnCloseConfirm">&times;</button>
-    </div>
+<!-- ── MODAL: CONFIRMAR ── -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal-box modal-sm">
+    <div class="modal-pill"></div>
+    <div class="modal-head"><h2 id="confirmTitle">Confirmar</h2><button class="modal-x" data-close="confirmModal">&times;</button></div>
     <div class="modal-body">
-      <p id="confirmMsg" style="color:var(--text-700);font-size:14px;margin-bottom:20px;"></p>
+      <p id="confirmMsg" style="color:var(--ink2);font-size:14px;line-height:1.6;margin-bottom:20px;"></p>
       <div style="display:flex;gap:10px;">
-        <button class="btn-save" id="btnConfirmOk" style="background:var(--danger);flex:1;">
-          <i class="fas fa-trash"></i> Excluir
-        </button>
-        <button class="btn-cancel" id="btnConfirmCancel">Cancelar</button>
+        <button class="btn-danger" id="btnConfirmOk"><i class="fas fa-trash"></i> Excluir</button>
+        <button class="btn-ghost" id="btnConfirmCancel">Cancelar</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="editModal">
+<!-- ── MODAL: EDITAR DESPESA ── -->
+<div class="modal-bg" id="editModal">
   <div class="modal-box">
-    <div class="modal-header">
-      <h2>Editar Lançamento</h2>
-      <button class="modal-close" id="btnCloseEdit">&times;</button>
-    </div>
+    <div class="modal-pill"></div>
+    <div class="modal-head"><h2>Editar Despesa</h2><button class="modal-x" data-close="editModal">&times;</button></div>
     <div class="modal-body">
       <input type="hidden" id="editId">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;">
-        <div class="mfield" style="grid-column:1/-1">
-          <label>Valor (R$)</label>
-          <input type="number" id="editValue" step="0.01" min="0.01" placeholder="0,00">
-        </div>
-        <div class="mfield" style="grid-column:1/-1">
-          <label>Descrição</label>
-          <input type="text" id="editDesc" maxlength="100" placeholder="Descrição...">
-        </div>
-        <div class="mfield" style="grid-column:1/-1">
-          <label>Empresa / Fornecedor</label>
-          <input type="text" id="editEmpresa" maxlength="80" placeholder="Nome da empresa...">
-        </div>
-        <div class="mfield">
+      <div class="fg">
+        <div class="fld s2"><label>Valor (R$)</label><input type="number" id="editValue" step="0.01" min="0.01" inputmode="decimal"></div>
+        <div class="fld s2"><label>Descrição</label><input type="text" id="editDesc" maxlength="120"></div>
+        <div class="fld s2"><label>Empresa / Fornecedor</label><input type="text" id="editEmpresa" maxlength="80"></div>
+        <div class="fld s2">
           <label>Categoria</label>
-          <select id="editCategory">
-            <option value="">Selecione...</option>
-            <optgroup label="Geral">
-              <option value="Alimentação">🍔 Alimentação</option>
-              <option value="Transporte">🚗 Transporte</option>
-              <option value="Saúde">❤️ Saúde</option>
-              <option value="Lazer">🎮 Lazer</option>
-              <option value="Educação">📚 Educação</option>
-              <option value="Moradia">🏠 Moradia</option>
-            </optgroup>
-            <optgroup label="Beleza & Estética">
-              <option value="Cabelo">💇 Cabelo</option>
-              <option value="Pele & Skincare">✨ Pele &amp; Skincare</option>
-              <option value="Maquiagem">💄 Maquiagem</option>
-              <option value="Perfumes">🌸 Perfumes</option>
-              <option value="Unhas">💅 Unhas</option>
-              <option value="Corpo & Banho">🛁 Corpo &amp; Banho</option>
-              <option value="Suplementos">💊 Suplementos</option>
-              <option value="Equipamentos">🔧 Equipamentos</option>
-            </optgroup>
-            <optgroup label="Outros">
-              <option value="Outro">📦 Outro</option>
-            </optgroup>
-          </select>
+          <select id="editCategory"></select>
         </div>
-        <div class="mfield">
-          <label>Data</label>
-          <input type="date" id="editDate">
-        </div>
-        <div class="mfield" style="grid-column:1/-1">
-          <label>Forma de Pagamento</label>
+        <div class="fld"><label>Data</label><input type="date" id="editDate"></div>
+        <div class="fld">
+          <label>Pagamento</label>
           <select id="editPayment">
             <option value="">Selecione...</option>
-            <option value="Dinheiro">💵 Dinheiro</option>
-            <option value="Débito">💳 Débito</option>
-            <option value="Crédito">🔵 Crédito</option>
-            <option value="Pix">⚡ Pix</option>
-            <option value="Boleto">📄 Boleto</option>
-            <option value="Transferência">🏦 Transferência</option>
-            <option value="Nota Fiscal">🧾 Nota Fiscal</option>
+            <option>Dinheiro</option><option>Débito</option><option>Crédito</option>
+            <option>Pix</option><option>Boleto</option><option>Transferência</option><option>Nota Fiscal</option>
           </select>
         </div>
       </div>
-      <button class="btn-save" id="btnSaveEdit" style="margin-top:16px;">
-        <i class="fas fa-check"></i> Salvar Alterações
-      </button>
+      <!-- TOGGLE PAGO NO MODAL DE EDIÇÃO -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border-radius:var(--r);margin-top:4px;margin-bottom:16px;border:1px solid var(--border);">
+        <button class="pay-toggle-track" id="editStatusToggle"></button>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--ink);" id="editStatusLabel">Status</div>
+          <div style="font-size:11px;color:var(--ink3);" id="editStatusSub">Toque para alterar</div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btnSaveEdit"><i class="fas fa-check"></i> Salvar Alterações</button>
     </div>
   </div>
 </div>
 
-<div class="page-wrapper">
-
-  <div class="page-title">
-    <div class="page-title-left">
-      <h1>Controle de <em>Gastos</em></h1>
-      <p>Gerencie e analise suas despesas com clareza.</p>
+<!-- ── MODAL: GERENCIAR CATEGORIAS ── -->
+<div class="modal-bg" id="catsModal">
+  <div class="modal-box">
+    <div class="modal-pill"></div>
+    <div class="modal-head"><h2>Gerenciar Categorias</h2><button class="modal-x" data-close="catsModal">&times;</button></div>
+    <div class="modal-body">
+      <div class="cats-list" id="catsList"></div>
+      <div class="add-cat-form" id="addCatForm">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:5px;">Cor</div>
+          <input type="color" class="color-pick" id="newCatColor" value="#2563eb">
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:5px;">Nome</div>
+          <input type="text" class="icon-pick" id="newCatName" placeholder="Nome da categoria..." maxlength="40" style="font-size:14px;">
+        </div>
+        <input type="hidden" id="newCatIcon" value="">
+        <div style="align-self:flex-end;">
+          <button class="btn-primary" id="btnAddCat" style="width:auto;padding:11px 16px;min-height:42px;"><i class="fas fa-plus"></i></button>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:12px;background:var(--accent-bg);border-radius:var(--r);border:1px solid rgba(37,99,235,.15);">
+        <div style="font-size:11px;color:var(--accent);font-weight:600;"><i class="fas fa-info-circle"></i> As categorias são salvas localmente e sincronizadas com sua conta.</div>
+      </div>
     </div>
   </div>
+</div>
 
+<!-- ── PÁGINA ── -->
+<div class="page">
+  <div class="page-ttl">
+    <h1>Controle de <em>Gastos</em></h1>
+    <p>BuyBrazil10 — Plano de Contas ERP</p>
+  </div>
+
+  <!-- KPIs -->
   <div class="kpi-grid">
-    <div class="kpi-card" style="--kpi-color:var(--danger);--kpi-icon-bg:var(--danger-light);">
+    <div class="kpi" style="--kc:var(--danger);--ki:var(--danger-bg);">
       <div class="kpi-icon"><i class="fas fa-fire-alt"></i></div>
-      <div class="kpi-label">Total no Período</div>
-      <div class="kpi-value" id="kpiTotal">R$ 0,00</div>
+      <div class="kpi-lbl">Total no Período</div>
+      <div class="kpi-val" id="kpiTotal">R$ 0,00</div>
       <div class="kpi-sub" id="kpiTotalSub">sem registros</div>
     </div>
-    <div class="kpi-card" style="--kpi-color:var(--warning);--kpi-icon-bg:var(--warning-light);">
-      <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
-      <div class="kpi-label">Média por Lançamento</div>
-      <div class="kpi-value" id="kpiAvg">R$ 0,00</div>
-      <div class="kpi-sub" id="kpiAvgSub">no período filtrado</div>
+    <div class="kpi" style="--kc:var(--warning);--ki:var(--warning-bg);">
+      <div class="kpi-icon"><i class="fas fa-clock"></i></div>
+      <div class="kpi-lbl">Pendente</div>
+      <div class="kpi-val" id="kpiPendente">R$ 0,00</div>
+      <div class="kpi-sub" id="kpiPendenteSub">0 lançamentos</div>
     </div>
-    <div class="kpi-card" style="--kpi-color:var(--success);--kpi-icon-bg:var(--success-light);">
-      <div class="kpi-icon"><i class="fas fa-trophy"></i></div>
-      <div class="kpi-label">Maior Categoria</div>
-      <div class="kpi-value" id="kpiTopCat" style="font-size:18px;">—</div>
-      <div class="kpi-sub" id="kpiTopCatSub">sem dados</div>
+    <div class="kpi" style="--kc:var(--success);--ki:var(--success-bg);">
+      <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="kpi-lbl">Pago</div>
+      <div class="kpi-val" id="kpiPago">R$ 0,00</div>
+      <div class="kpi-sub" id="kpiPagoSub">0 lançamentos</div>
     </div>
-    <div class="kpi-card" style="--kpi-color:var(--accent);--kpi-icon-bg:var(--accent-light);">
+    <div class="kpi" style="--kc:var(--accent);--ki:var(--accent-bg);">
       <div class="kpi-icon"><i class="fas fa-file-invoice"></i></div>
-      <div class="kpi-label">Transações</div>
-      <div class="kpi-value" id="kpiCount">0</div>
-      <div class="kpi-sub" id="kpiCountSub">no período filtrado</div>
+      <div class="kpi-lbl">Transações</div>
+      <div class="kpi-val" id="kpiCount">0</div>
+      <div class="kpi-sub" id="kpiCountSub">no período</div>
     </div>
   </div>
 
+  <!-- CHARTS -->
   <div class="charts-grid">
-    <div class="section-card">
-      <div class="card-header">
-        <div class="card-header-left">
-          <div class="card-header-icon"><i class="fas fa-chart-pie"></i></div>
-          <h2>Gastos por Categoria</h2>
-        </div>
-        <span class="card-meta" id="donutMeta"></span>
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-chart-pie"></i></div><h2>Por Categoria</h2></div>
+        <span class="sc-meta" id="donutMeta"></span>
       </div>
-      <div class="card-body">
-        <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
-        <div class="chart-legend" id="donutLegend"></div>
-      </div>
+      <div class="sc-body"><div class="chart-wrap"><canvas id="donutChart"></canvas></div><div class="chart-legend" id="donutLegend"></div></div>
     </div>
-    <div class="section-card">
-      <div class="card-header">
-        <div class="card-header-left">
-          <div class="card-header-icon"><i class="fas fa-chart-bar"></i></div>
-          <h2>Evolução dos Últimos 6 Meses</h2>
-        </div>
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-chart-bar"></i></div><h2>Evolução 6 Meses</h2></div>
       </div>
-      <div class="card-body">
-        <div class="chart-wrap"><canvas id="barChart"></canvas></div>
-      </div>
+      <div class="sc-body"><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
     </div>
   </div>
 
   <div class="main-grid">
+    <!-- LEFT: tabela -->
     <div>
-      <div class="filters-bar">
-        <span class="filter-label"><i class="fas fa-filter"></i> Filtrar:</span>
-        <select class="filter-select" id="filterMonth"><option value="">Todos os meses</option></select>
-        <select class="filter-select" id="filterYear"><option value="">Todos os anos</option></select>
-        <select class="filter-select" id="filterCat">
-          <option value="">Todas as categorias</option>
-          <option value="Alimentação">Alimentação</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Saúde">Saúde</option>
-          <option value="Lazer">Lazer</option>
-          <option value="Educação">Educação</option>
-          <option value="Moradia">Moradia</option>
-          <option value="Cabelo">Cabelo</option>
-          <option value="Pele & Skincare">Pele &amp; Skincare</option>
-          <option value="Maquiagem">Maquiagem</option>
-          <option value="Perfumes">Perfumes</option>
-          <option value="Unhas">Unhas</option>
-          <option value="Corpo & Banho">Corpo &amp; Banho</option>
-          <option value="Suplementos">Suplementos</option>
-          <option value="Equipamentos">Equipamentos</option>
-          <option value="Outro">Outro</option>
+      <!-- FILTERS -->
+      <div class="filters">
+        <span class="filter-lbl"><i class="fas fa-filter"></i> Filtrar:</span>
+        <select class="fsel" id="filterMonth"><option value="">Todos os meses</option></select>
+        <select class="fsel" id="filterYear"><option value="">Todos os anos</option></select>
+        <select class="fsel" id="filterCat"><option value="">Todas as categorias</option></select>
+        <select class="fsel" id="filterEmpresa"><option value="">Todas as empresas</option></select>
+        <select class="fsel" id="filterStatus">
+          <option value="">Todos os status</option>
+          <option value="pendente">Pendente</option>
+          <option value="pago">Pago</option>
         </select>
         <div class="search-wrap">
           <i class="fas fa-search search-icon"></i>
-          <input class="search-input" type="text" id="searchInput" placeholder="Buscar descrição ou empresa...">
-          <button class="search-clear" id="btnSearchClear" style="display:none;"><i class="fas fa-times"></i></button>
+          <input class="search-inp" type="text" id="searchInput" placeholder="Buscar descrição, empresa...">
+          <button class="search-clr" id="btnSearchClear" style="display:none;"><i class="fas fa-times"></i></button>
         </div>
-        <button class="btn-clear" id="clearFilters"><i class="fas fa-times"></i> Limpar</button>
+        <button class="btn-clr" id="clearFilters"><i class="fas fa-times"></i> Limpar</button>
       </div>
 
-      <div class="section-card">
-        <div class="card-header">
-          <div class="card-header-left">
-            <div class="card-header-icon"><i class="fas fa-list-ul"></i></div>
-            <h2>Histórico de Despesas</h2>
-          </div>
-          <span class="card-meta" id="tableCount"></span>
+      <div class="sc">
+        <div class="sc-head">
+          <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-list-ul"></i></div><h2>Histórico de Despesas</h2></div>
+          <span class="sc-meta" id="tableCount"></span>
         </div>
-        <div class="table-wrap">
+        <div class="tbl-wrap">
           <table>
             <thead>
               <tr>
-                <th class="sortable" data-col="data">Data <i class="fas fa-sort sort-icon"></i></th>
+                <th class="sortable" data-col="data">Data <i class="fas fa-sort sort-ico"></i></th>
                 <th>Descrição</th>
-                <th>Empresa</th>
-                <th class="sortable" data-col="categoria">Categoria <i class="fas fa-sort sort-icon"></i></th>
+                <th class="sortable" data-col="categoria">Categoria <i class="fas fa-sort sort-ico"></i></th>
                 <th>Pagamento</th>
-                <th class="sortable" data-col="valor">Valor <i class="fas fa-sort sort-icon"></i></th>
+                <th>Pago?</th>
+                <th class="sortable" data-col="valor">Valor <i class="fas fa-sort sort-ico"></i></th>
                 <th></th>
               </tr>
             </thead>
-            <tbody id="expenseTableBody">
-              <tr><td colspan="7">
-                <div class="empty-state">
-                  <i class="fas fa-inbox"></i>
-                  Nenhuma despesa registrada ainda.
-                </div>
-              </td></tr>
+            <tbody id="expBody">
+              <tr><td colspan="7"><div class="empty-row"><i class="fas fa-inbox"></i>Nenhuma despesa ainda.</div></td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- RIGHT: form + export -->
     <div>
-      <div class="section-card">
-        <div class="card-header">
-          <div class="card-header-left">
-            <div class="card-header-icon" id="formIcon"><i class="fas fa-plus"></i></div>
-            <h2 id="formTitle">Nova Despesa</h2>
-          </div>
+      <div class="sc">
+        <div class="sc-head">
+          <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-plus"></i></div><h2>Nova Despesa</h2></div>
         </div>
-        <div class="card-body">
-          <form id="expenseForm" autocomplete="off">
-            <div class="form-grid">
-              <div class="field span2">
+        <div class="sc-body">
+          <!-- preview das cats customizadas -->
+          <div class="cat-list-preview" id="catPreview"></div>
+          <button class="cat-manager-btn" id="btnOpenCats">
+            <i class="fas fa-palette"></i> Gerenciar Categorias
+          </button>
+          <form id="expForm" autocomplete="off">
+            <div class="fg">
+              <div class="fld s2">
                 <label>Valor (R$)</label>
-                <input type="number" id="expValue" placeholder="0,00" step="0.01" min="0.01" required>
-                <span class="field-error" id="errValue"></span>
+                <input type="number" id="expValue" placeholder="0,00" step="0.01" min="0.01" required inputmode="decimal">
+                <span class="fld-err" id="errValue"></span>
               </div>
-              <div class="field span2">
+              <div class="fld s2">
                 <label>Descrição</label>
-                <input type="text" id="expDesc" placeholder="Ex: Nota fiscal de fornecedor..." maxlength="100" required>
-                <span class="field-error" id="errDesc"></span>
+                <input type="text" id="expDesc" placeholder="Ex: Nota fiscal FedEx..." maxlength="120" required>
+                <span class="fld-err" id="errDesc"></span>
               </div>
-              <div class="field span2">
+              <div class="fld s2">
                 <label>Empresa / Fornecedor</label>
-                <input type="text" id="expEmpresa" placeholder="Ex: Amazon, Fornecedor XYZ..." maxlength="80">
-                <span class="field-hint">Nome da empresa ou fornecedor do gasto</span>
+                <input type="text" id="expEmpresa" placeholder="Ex: FedEx, Correios..." maxlength="80">
               </div>
-              <div class="field">
+              <div class="fld s2">
                 <label>Categoria</label>
                 <select id="expCategory" required>
                   <option value="">Selecione...</option>
-                  <optgroup label="Geral">
-                    <option value="Alimentação">🍔 Alimentação</option>
-                    <option value="Transporte">🚗 Transporte</option>
-                    <option value="Saúde">❤️ Saúde</option>
-                    <option value="Lazer">🎮 Lazer</option>
-                    <option value="Educação">📚 Educação</option>
-                    <option value="Moradia">🏠 Moradia</option>
-                  </optgroup>
-                  <optgroup label="Beleza & Estética">
-                    <option value="Cabelo">💇 Cabelo</option>
-                    <option value="Pele & Skincare">✨ Pele &amp; Skincare</option>
-                    <option value="Maquiagem">💄 Maquiagem</option>
-                    <option value="Perfumes">🌸 Perfumes</option>
-                    <option value="Unhas">💅 Unhas</option>
-                    <option value="Corpo & Banho">🛁 Corpo &amp; Banho</option>
-                    <option value="Suplementos">💊 Suplementos</option>
-                    <option value="Equipamentos">🔧 Equipamentos</option>
-                  </optgroup>
-                  <optgroup label="Outros">
-                    <option value="Outro">📦 Outro</option>
-                  </optgroup>
                 </select>
-                <span class="field-error" id="errCategory"></span>
+                <span class="fld-err" id="errCategory"></span>
               </div>
-              <div class="field">
+              <div class="fld">
                 <label>Data</label>
                 <input type="date" id="expDate" required>
               </div>
-              <div class="field span2">
-                <label>Forma de Pagamento</label>
+              <div class="fld">
+                <label>Pagamento</label>
                 <select id="expPayment" required>
                   <option value="">Selecione...</option>
-                  <option value="Dinheiro">💵 Dinheiro</option>
-                  <option value="Débito">💳 Débito</option>
-                  <option value="Crédito">🔵 Crédito</option>
-                  <option value="Pix">⚡ Pix</option>
-                  <option value="Boleto">📄 Boleto</option>
-                  <option value="Transferência">🏦 Transferência</option>
-                  <option value="Nota Fiscal">🧾 Nota Fiscal</option>
+                  <option>Dinheiro</option><option>Débito</option><option>Crédito</option>
+                  <option>Pix</option><option>Boleto</option><option>Transferência</option><option>Nota Fiscal</option>
                 </select>
-                <span class="field-error" id="errPayment"></span>
+                <span class="fld-err" id="errPayment"></span>
+              </div>
+              <div class="fld s2">
+                <label>Status inicial</label>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--bg2);border-radius:var(--r);border:1.5px solid var(--border);">
+                  <button type="button" class="pay-toggle-track" id="expStatusToggle"></button>
+                  <span style="font-size:13px;font-weight:600;color:var(--ink2);" id="expStatusLabel">Pendente</span>
+                </div>
               </div>
             </div>
-            <button type="submit" class="btn-add" id="btnAdd">
-              <i class="fas fa-plus"></i> Registrar Despesa
-            </button>
+            <button type="submit" class="btn-primary" id="btnAdd" style="margin-top:8px;"><i class="fas fa-plus"></i> Registrar Despesa</button>
           </form>
         </div>
       </div>
 
+      <!-- EXPORT PDF -->
       <div class="export-card">
-        <div class="export-head">
-          <div class="export-head-icon"><i class="fas fa-file-pdf"></i></div>
-          <div class="export-head-text">
-            <h3>Relatório Mensal em PDF</h3>
-            <p>Exportar todas as despesas do período</p>
-          </div>
+        <div class="export-hdr">
+          <div class="export-hdr-ico"><i class="fas fa-file-pdf"></i></div>
+          <div class="export-hdr-txt"><h3>Relatório em PDF</h3><p>Exportar despesas do período</p></div>
         </div>
         <div class="export-body">
           <div class="export-row">
-            <div class="export-field">
-              <label>Mês</label>
+            <div class="efld"><label>Mês</label>
               <select id="pdfMonth">
-                <option value="1">Janeiro</option><option value="2">Fevereiro</option>
-                <option value="3">Março</option><option value="4">Abril</option>
-                <option value="5">Maio</option><option value="6">Junho</option>
-                <option value="7">Julho</option><option value="8">Agosto</option>
-                <option value="9">Setembro</option><option value="10">Outubro</option>
-                <option value="11">Novembro</option><option value="12">Dezembro</option>
+                <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
+                <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
+                <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
+                <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
               </select>
             </div>
-            <div class="export-field">
-              <label>Ano</label>
-              <input type="number" id="pdfYear" min="2020" max="2099" value="2025">
-            </div>
+            <div class="efld"><label>Ano</label><input type="number" id="pdfYear" min="2020" max="2099"></div>
           </div>
-          <div class="export-company">
-            <label>Nome da Empresa (para o relatório)</label>
-            <input type="text" id="pdfCompany" placeholder="Sua Empresa Ltda.">
+          <div class="efld" style="margin-bottom:12px;"><label>Nome da Empresa</label><input type="text" id="pdfCompany" placeholder="BuyBrazil10 Ltda."></div>
+          <div class="eprev" id="exportPreview">
+            <div class="eprev-ttl">Pré-visualização</div>
+            <div class="eprev-row"><span>Período</span><span id="prevPeriod">—</span></div>
+            <div class="eprev-row"><span>Transações</span><span id="prevCount">0</span></div>
+            <div class="eprev-row"><span>Pendente</span><span id="prevPend">R$ 0,00</span></div>
+            <div class="eprev-row hi"><span>Total</span><span id="prevTotal">R$ 0,00</span></div>
           </div>
-          <div class="export-preview" id="exportPreview">
-            <div class="export-preview-title">Pré-visualização</div>
-            <div class="export-preview-row"><span>Período</span><span id="prevPeriod">—</span></div>
-            <div class="export-preview-row"><span>Transações</span><span id="prevCount">0</span></div>
-            <div class="export-preview-row"><span>Maior categoria</span><span id="prevTopCat">—</span></div>
-            <div class="export-preview-row highlight"><span>Total</span><span id="prevTotal">R$ 0,00</span></div>
-          </div>
-          <button class="btn-export" id="btnExportPdf">
-            <i class="fas fa-download"></i> Gerar e Baixar PDF
-          </button>
+          <button class="btn-export" id="btnExportPdf"><i class="fas fa-download"></i> Gerar e Baixar PDF</button>
         </div>
       </div>
     </div>
@@ -428,6 +350,5 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/gastos.js"></script>
-
 </body>
 </html>
