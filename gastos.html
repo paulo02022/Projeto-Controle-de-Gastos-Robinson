@@ -1,105 +1,192 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Gastos | BuyBrazil10</title>
+  <title>BuyBrazil10 · ERP Financeiro</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="/gastos.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="gastos.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    (function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('bb_theme') || 'light'); })();
+  </script>
 </head>
 <body>
 
+<!-- ══════════════════════════════════
+     LOADING
+══════════════════════════════════ -->
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-box"><div class="loading-spin"></div><span>Carregando...</span></div>
+  <div class="loading-box">
+    <div class="loading-logo">📊</div>
+    <div class="loading-spin"></div>
+    <span>Carregando dados...</span>
+  </div>
 </div>
 
-<!-- ── HEADER ── -->
-<header class="hdr">
-  <div class="hdr-brand">
-    <div class="hdr-logo"><i class="fas fa-table"></i></div>
-    <div class="hdr-name">Controle de <span>Gastos</span></div>
+<!-- ══════════════════════════════════
+     MOBILE HEADER (top bar, mobile only)
+══════════════════════════════════ -->
+<header class="mobile-header">
+  <div class="mobile-header-brand">
+    <div class="mobile-header-logo">📊</div>
+    <span class="mobile-header-name">BuyBrazil10</span>
   </div>
-  <div class="hdr-right">
-    <div class="prof-wrap">
-      <button class="prof-btn" id="profBtn">
-        <img id="hdrAvatar" src="https://ui-avatars.com/api/?name=U&background=2563eb&color=fff" alt="">
-        <span class="prof-btn-name" id="hdrName">Usuário</span>
-        <i class="fas fa-chevron-down prof-btn-chev"></i>
-      </button>
-      <div class="prof-drop" id="profDrop">
-        <div class="prof-drop-head">
-          <img id="dropAvatar" src="https://ui-avatars.com/api/?name=U&background=2563eb&color=fff" alt="">
-          <div>
-            <div class="prof-drop-name" id="dropName">Usuário</div>
-            <div class="prof-drop-email" id="dropEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5e3b333f37321e3b333f3732703d3133">[email&#160;protected]</a></div>
-          </div>
+  <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+</header>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ══════════════════════════════════
+     SIDEBAR
+══════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">📊</div>
+    <div class="sidebar-brand-text">
+      <div class="sidebar-brand-name">BuyBrazil10</div>
+      <div class="sidebar-brand-sub">ERP Financeiro</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Principal</div>
+    <button class="nav-tab active" data-tab="dashboard">
+      <div class="nav-icon"><i class="fas fa-home"></i></div>
+      Dashboard
+    </button>
+    <button class="nav-tab" data-tab="despesas">
+      <div class="nav-icon"><i class="fas fa-list-ul"></i></div>
+      Despesas
+    </button>
+    <button class="nav-tab" data-tab="novo">
+      <div class="nav-icon"><i class="fas fa-plus"></i></div>
+      Novo Lançamento
+    </button>
+
+    <div class="sidebar-section-label">Gestão</div>
+    <button class="nav-tab" data-tab="orcamento">
+      <div class="nav-icon"><i class="fas fa-bullseye"></i></div>
+      Orçamento
+    </button>
+    <button class="nav-tab" data-tab="relatorios">
+      <div class="nav-icon"><i class="fas fa-file-pdf"></i></div>
+      Relatórios
+    </button>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <button class="sidebar-theme-btn" id="sidebarThemeBtn">
+      <div class="nav-icon"><i class="fas fa-moon" id="themeIcon"></i></div>
+      <span id="themeLabel">Modo Escuro</span>
+    </button>
+
+    <div class="sidebar-profile" id="profileBtn">
+      <img id="headerAvatar" src="https://ui-avatars.com/api/?name=U&background=059669&color=fff" alt="avatar">
+      <div class="sidebar-profile-info">
+        <div class="sidebar-profile-name" id="headerUserName">Usuário</div>
+        <div class="sidebar-profile-email" id="headerUserEmail">—</div>
+      </div>
+      <i class="fas fa-ellipsis-v sidebar-profile-menu"></i>
+    </div>
+
+    <!-- Profile dropdown -->
+    <div class="profile-drop" id="profileDrop">
+      <div class="profile-drop-head">
+        <img id="dropAvatar" src="https://ui-avatars.com/api/?name=U&background=059669&color=fff" alt="avatar">
+        <div>
+          <div class="profile-drop-name" id="dropName">Usuário</div>
+          <div class="profile-drop-email" id="dropEmail">—</div>
         </div>
-        <div class="prof-drop-body">
-          <button class="prof-item" id="btnOpenProfile"><i class="fas fa-user-edit"></i> Editar Perfil</button>
-          <button class="prof-item accent" onclick="location.href='dashboard.html'"><i class="fas fa-home"></i> Ir ao Portfólio</button>
-          <div class="prof-sep"></div>
-          <button class="prof-item danger" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Sair da conta</button>
-        </div>
+      </div>
+      <div class="profile-drop-body">
+        <button class="drop-item" id="openProfileBtn"><i class="fas fa-user-edit"></i> Editar Perfil</button>
+        <div class="drop-sep"></div>
+        <button class="drop-item drop-item--danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
       </div>
     </div>
   </div>
-</header>
+</aside>
 
-<!-- ── MODAL: PERFIL ── -->
+<!-- ══════════════════════════════════
+     MOBILE BOTTOM NAV
+══════════════════════════════════ -->
+<nav class="mobile-nav">
+  <button class="mobile-nav-btn active" data-tab="dashboard"><i class="fas fa-home"></i><span>Dashboard</span></button>
+  <button class="mobile-nav-btn" data-tab="despesas"><i class="fas fa-list-ul"></i><span>Despesas</span></button>
+  <button class="mobile-nav-btn mobile-nav-btn--new" data-tab="novo"><i class="fas fa-plus"></i></button>
+  <button class="mobile-nav-btn" data-tab="orcamento"><i class="fas fa-bullseye"></i><span>Orçamento</span></button>
+  <button class="mobile-nav-btn" data-tab="relatorios"><i class="fas fa-file-pdf"></i><span>Relatórios</span></button>
+</nav>
+
+<!-- ══════════════════════════════════
+     MODALS
+══════════════════════════════════ -->
+
+<!-- MODAL: PERFIL -->
 <div class="modal-bg" id="profileModal">
   <div class="modal-box">
     <div class="modal-pill"></div>
-    <div class="modal-head"><h2>Meu Perfil</h2><button class="modal-x" data-close="profileModal">&times;</button></div>
+    <div class="modal-head">
+      <h2>Meu Perfil</h2>
+      <button class="modal-close" data-close="profileModal">&times;</button>
+    </div>
     <div class="modal-body">
-      <div class="avatar-wrap">
-        <img class="avatar-big" id="profileAvatarPreview" src="" alt="">
-        <div class="avatar-info">
-          <div class="avatar-name" id="profileDisplayName">—</div>
-          <div class="avatar-email" id="profileDisplayEmail">—</div>
-          <div class="avatar-since" id="profileSince">—</div>
+      <div class="profile-preview">
+        <img class="profile-avatar-lg" id="profileAvatarPreview" src="" alt="avatar">
+        <div>
+          <div class="profile-preview-name" id="profileDisplayName">—</div>
+          <div class="profile-preview-email" id="profileDisplayEmail">—</div>
+          <div class="profile-preview-since" id="profileSince">—</div>
         </div>
       </div>
-      <div class="fld"><label>Foto de Perfil</label><input type="file" id="avatarInput" accept="image/*"></div>
-      <div class="fld"><label>Nome de usuário</label><input type="text" id="editUsername" placeholder="Seu nome"></div>
-      <div class="fld"><label>Bio</label><textarea id="editBio" placeholder="Uma breve descrição sobre você..."></textarea></div>
-      <button class="btn-primary" id="btnSaveProfile"><i class="fas fa-check"></i> Salvar Alterações</button>
+      <div class="fld" style="margin-bottom:14px;"><label>Foto de Perfil</label><input class="inputfile" type="file" id="avatarInput" accept="image/*"></div>
+      <div class="fld" style="margin-bottom:14px;"><label>Nome de usuário</label><input type="text" id="editUsername" placeholder="Seu nome"></div>
+      <div class="fld" style="margin-bottom:16px;"><label>Bio</label><textarea id="editBio" placeholder="Uma breve descrição..."></textarea></div>
+      <button class="btn-primary" id="saveProfileBtn"><i class="fas fa-check"></i> Salvar Alterações</button>
     </div>
   </div>
 </div>
 
-<!-- ── MODAL: CONFIRMAR ── -->
+<!-- MODAL: CONFIRMAR -->
 <div class="modal-bg" id="confirmModal">
-  <div class="modal-box modal-sm">
+  <div class="modal-box modal-box--sm">
     <div class="modal-pill"></div>
-    <div class="modal-head"><h2 id="confirmTitle">Confirmar</h2><button class="modal-x" data-close="confirmModal">&times;</button></div>
+    <div class="modal-head">
+      <h2 id="confirmTitle">Confirmar</h2>
+      <button class="modal-close" data-close="confirmModal">&times;</button>
+    </div>
     <div class="modal-body">
-      <p id="confirmMsg" style="color:var(--ink2);font-size:14px;line-height:1.6;margin-bottom:20px;"></p>
-      <div style="display:flex;gap:10px;">
-        <button class="btn-danger" id="btnConfirmOk"><i class="fas fa-trash"></i> Excluir</button>
-        <button class="btn-ghost" id="btnConfirmCancel">Cancelar</button>
+      <p class="confirm-msg" id="confirmMsg"></p>
+      <div class="btn-row">
+        <button class="btn-danger" id="confirmOkBtn"><i class="fas fa-trash"></i> Excluir</button>
+        <button class="btn-ghost" id="confirmCancelBtn">Cancelar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── MODAL: EDITAR DESPESA ── -->
+<!-- MODAL: EDITAR DESPESA -->
 <div class="modal-bg" id="editModal">
   <div class="modal-box">
     <div class="modal-pill"></div>
-    <div class="modal-head"><h2>Editar Despesa</h2><button class="modal-x" data-close="editModal">&times;</button></div>
+    <div class="modal-head">
+      <h2>Editar Despesa</h2>
+      <button class="modal-close" data-close="editModal">&times;</button>
+    </div>
     <div class="modal-body">
       <input type="hidden" id="editId">
-      <div class="fg">
-        <div class="fld s2"><label>Valor (R$)</label><input type="number" id="editValue" step="0.01" min="0.01" inputmode="decimal"></div>
-        <div class="fld s2"><label>Descrição</label><input type="text" id="editDesc" maxlength="120"></div>
-        <div class="fld s2"><label>Empresa / Fornecedor</label><input type="text" id="editEmpresa" maxlength="80"></div>
-        <div class="fld s2">
-          <label>Categoria</label>
-          <select id="editCategory"></select>
-        </div>
+      <div class="form-grid">
+        <div class="fld fld--full"><label>Valor (R$)</label><input type="number" id="editValue" step="0.01" min="0.01" inputmode="decimal"></div>
+        <div class="fld fld--full"><label>Descrição</label><input type="text" id="editDesc" maxlength="120"></div>
+        <div class="fld fld--full"><label>Empresa / Fornecedor</label><input type="text" id="editEmpresa" maxlength="80"></div>
+        <div class="fld fld--full"><label>Categoria</label><select id="editCategory"></select></div>
         <div class="fld"><label>Data</label><input type="date" id="editDate"></div>
         <div class="fld">
           <label>Pagamento</label>
@@ -110,181 +197,213 @@
           </select>
         </div>
       </div>
-      <!-- TOGGLE PAGO NO MODAL DE EDIÇÃO -->
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border-radius:var(--r);margin-top:4px;margin-bottom:16px;border:1px solid var(--border);">
-        <button class="pay-toggle-track" id="editStatusToggle"></button>
+      <div class="status-row" style="margin-bottom:16px;">
+        <button type="button" class="toggle-track" id="editStatusToggle"></button>
         <div>
-          <div style="font-size:13px;font-weight:700;color:var(--ink);" id="editStatusLabel">Status</div>
-          <div style="font-size:11px;color:var(--ink3);" id="editStatusSub">Toque para alterar</div>
+          <div class="status-label" id="editStatusLabel">Status</div>
+          <div class="status-hint" id="editStatusHint">Toque para alterar</div>
         </div>
       </div>
-      <button class="btn-primary" id="btnSaveEdit"><i class="fas fa-check"></i> Salvar Alterações</button>
+      <button class="btn-primary" id="saveEditBtn"><i class="fas fa-check"></i> Salvar Alterações</button>
     </div>
   </div>
 </div>
 
-<!-- ── MODAL: GERENCIAR CATEGORIAS ── -->
+<!-- MODAL: CATEGORIAS -->
 <div class="modal-bg" id="catsModal">
   <div class="modal-box">
     <div class="modal-pill"></div>
-    <div class="modal-head"><h2>Gerenciar Categorias</h2><button class="modal-x" data-close="catsModal">&times;</button></div>
+    <div class="modal-head">
+      <h2>Gerenciar Categorias</h2>
+      <button class="modal-close" data-close="catsModal">&times;</button>
+    </div>
     <div class="modal-body">
       <div class="cats-list" id="catsList"></div>
-      <div class="add-cat-form" id="addCatForm">
-        <div>
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:5px;">Cor</div>
-          <input type="color" class="color-pick" id="newCatColor" value="#2563eb">
-        </div>
-        <div>
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:5px;">Nome</div>
-          <input type="text" class="icon-pick" id="newCatName" placeholder="Nome da categoria..." maxlength="40" style="font-size:14px;">
-        </div>
+      <div class="add-cat-row">
+        <input type="color" class="color-pick" id="newCatColor" value="#059669">
+        <input type="text" class="cat-name-input" id="newCatName" placeholder="Nome da categoria..." maxlength="40">
         <input type="hidden" id="newCatIcon" value="">
-        <div style="align-self:flex-end;">
-          <button class="btn-primary" id="btnAddCat" style="width:auto;padding:11px 16px;min-height:42px;"><i class="fas fa-plus"></i></button>
-        </div>
-      </div>
-      <div style="margin-top:14px;padding:12px;background:var(--accent-bg);border-radius:var(--r);border:1px solid rgba(37,99,235,.15);">
-        <div style="font-size:11px;color:var(--accent);font-weight:600;"><i class="fas fa-info-circle"></i> As categorias são salvas localmente e sincronizadas com sua conta.</div>
+        <button class="btn-primary btn-primary--icon" id="addCatBtn"><i class="fas fa-plus"></i></button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── PÁGINA ── -->
-<div class="page">
-  <div class="page-ttl">
-    <h1>Controle de <em>Gastos</em></h1>
-    <p>BuyBrazil10 — Plano de Contas ERP</p>
-  </div>
+<!-- ══════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════ -->
+<main class="main-content">
 
-  <!-- KPIs -->
-  <div class="kpi-grid">
-    <div class="kpi" style="--kc:var(--danger);--ki:var(--danger-bg);">
-      <div class="kpi-icon"><i class="fas fa-fire-alt"></i></div>
-      <div class="kpi-lbl">Total no Período</div>
-      <div class="kpi-val" id="kpiTotal">R$ 0,00</div>
-      <div class="kpi-sub" id="kpiTotalSub">sem registros</div>
-    </div>
-    <div class="kpi" style="--kc:var(--warning);--ki:var(--warning-bg);">
-      <div class="kpi-icon"><i class="fas fa-clock"></i></div>
-      <div class="kpi-lbl">Pendente</div>
-      <div class="kpi-val" id="kpiPendente">R$ 0,00</div>
-      <div class="kpi-sub" id="kpiPendenteSub">0 lançamentos</div>
-    </div>
-    <div class="kpi" style="--kc:var(--success);--ki:var(--success-bg);">
-      <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
-      <div class="kpi-lbl">Pago</div>
-      <div class="kpi-val" id="kpiPago">R$ 0,00</div>
-      <div class="kpi-sub" id="kpiPagoSub">0 lançamentos</div>
-    </div>
-    <div class="kpi" style="--kc:var(--accent);--ki:var(--accent-bg);">
-      <div class="kpi-icon"><i class="fas fa-file-invoice"></i></div>
-      <div class="kpi-lbl">Transações</div>
-      <div class="kpi-val" id="kpiCount">0</div>
-      <div class="kpi-sub" id="kpiCountSub">no período</div>
-    </div>
-  </div>
-
-  <!-- CHARTS -->
-  <div class="charts-grid">
-    <div class="sc">
-      <div class="sc-head">
-        <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-chart-pie"></i></div><h2>Por Categoria</h2></div>
-        <span class="sc-meta" id="donutMeta"></span>
+  <!-- ── DASHBOARD ── -->
+  <div class="tab-content active" id="tab-dashboard">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-sub" id="dashPeriodLabel">Visão geral do período atual</p>
       </div>
-      <div class="sc-body"><div class="chart-wrap"><canvas id="donutChart"></canvas></div><div class="chart-legend" id="donutLegend"></div></div>
-    </div>
-    <div class="sc">
-      <div class="sc-head">
-        <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-chart-bar"></i></div><h2>Evolução 6 Meses</h2></div>
-      </div>
-      <div class="sc-body"><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
-    </div>
-  </div>
-
-  <div class="main-grid">
-    <!-- LEFT: tabela -->
-    <div>
-      <!-- FILTERS -->
-      <div class="filters">
-        <span class="filter-lbl"><i class="fas fa-filter"></i> Filtrar:</span>
-        <select class="fsel" id="filterMonth"><option value="">Todos os meses</option></select>
-        <select class="fsel" id="filterYear"><option value="">Todos os anos</option></select>
-        <select class="fsel" id="filterCat"><option value="">Todas as categorias</option></select>
-        <select class="fsel" id="filterEmpresa"><option value="">Todas as empresas</option></select>
-        <select class="fsel" id="filterStatus">
-          <option value="">Todos os status</option>
-          <option value="pendente">Pendente</option>
-          <option value="pago">Pago</option>
+      <div class="page-header-actions">
+        <select class="select-sm" id="dashPeriodFilter">
+          <option value="mes_atual">Este mês</option>
+          <option value="mes_anterior">Mês anterior</option>
+          <option value="trimestre">Últimos 3 meses</option>
+          <option value="ano">Este ano</option>
+          <option value="todos">Tudo</option>
         </select>
-        <div class="search-wrap">
-          <i class="fas fa-search search-icon"></i>
-          <input class="search-inp" type="text" id="searchInput" placeholder="Buscar descrição, empresa...">
-          <button class="search-clr" id="btnSearchClear" style="display:none;"><i class="fas fa-times"></i></button>
-        </div>
-        <button class="btn-clr" id="clearFilters"><i class="fas fa-times"></i> Limpar</button>
       </div>
+    </div>
 
-      <div class="sc">
-        <div class="sc-head">
-          <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-list-ul"></i></div><h2>Histórico de Despesas</h2></div>
-          <span class="sc-meta" id="tableCount"></span>
+    <div class="kpi-grid" id="kpiGrid">
+      <div class="kpi kpi--blue">
+        <div class="kpi-icon"><i class="fas fa-wallet"></i></div>
+        <div class="kpi-label">Total no Período</div>
+        <div class="kpi-value" id="kpiTotal">R$ 0,00</div>
+        <div class="kpi-sub" id="kpiTotalSub">0 lançamentos</div>
+      </div>
+      <div class="kpi kpi--orange">
+        <div class="kpi-icon"><i class="fas fa-clock"></i></div>
+        <div class="kpi-label">A Pagar</div>
+        <div class="kpi-value" id="kpiPendente">R$ 0,00</div>
+        <div class="kpi-sub" id="kpiPendenteSub">0 pendentes</div>
+      </div>
+      <div class="kpi kpi--green">
+        <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="kpi-label">Pago</div>
+        <div class="kpi-value" id="kpiPago">R$ 0,00</div>
+        <div class="kpi-sub" id="kpiPagoSub">0 pagos</div>
+      </div>
+      <div class="kpi kpi--purple">
+        <div class="kpi-icon"><i class="fas fa-receipt"></i></div>
+        <div class="kpi-label">Lançamentos</div>
+        <div class="kpi-value" id="kpiCount">0</div>
+        <div class="kpi-sub" id="kpiCountSub">no período</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><i class="fas fa-chart-bar card-header-icon"></i><h3>Evolução Mensal</h3></div>
         </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="sortable" data-col="data">Data <i class="fas fa-sort sort-ico"></i></th>
-                <th>Descrição</th>
-                <th class="sortable" data-col="categoria">Categoria <i class="fas fa-sort sort-ico"></i></th>
-                <th>Pagamento</th>
-                <th>Pago?</th>
-                <th class="sortable" data-col="valor">Valor <i class="fas fa-sort sort-ico"></i></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="expBody">
-              <tr><td colspan="7"><div class="empty-row"><i class="fas fa-inbox"></i>Nenhuma despesa ainda.</div></td></tr>
-            </tbody>
-          </table>
+        <div class="card-body"><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><i class="fas fa-chart-pie card-header-icon"></i><h3>Por Categoria</h3></div>
+          <span class="card-meta" id="donutMeta"></span>
+        </div>
+        <div class="card-body">
+          <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+          <div class="chart-legend" id="donutLegend"></div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: form + export -->
-    <div>
-      <div class="sc">
-        <div class="sc-head">
-          <div class="sc-head-l"><div class="sc-head-icon"><i class="fas fa-plus"></i></div><h2>Nova Despesa</h2></div>
+    <div class="two-col" style="margin-bottom:28px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><i class="fas fa-fire card-header-icon"></i><h3>Top Categorias</h3></div>
         </div>
-        <div class="sc-body">
-          <!-- preview das cats customizadas -->
-          <div class="cat-list-preview" id="catPreview"></div>
-          <button class="cat-manager-btn" id="btnOpenCats">
-            <i class="fas fa-palette"></i> Gerenciar Categorias
-          </button>
-          <form id="expForm" autocomplete="off">
-            <div class="fg">
-              <div class="fld s2">
+        <div class="card-body" id="topCatsBody"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><i class="fas fa-history card-header-icon"></i><h3>Últimas Despesas</h3></div>
+          <button class="link-btn" onclick="switchTab('despesas')">Ver todas →</button>
+        </div>
+        <div class="card-body" id="recentExpBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DESPESAS ── -->
+  <div class="tab-content" id="tab-despesas">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Histórico de Despesas</h1>
+        <p class="page-sub">Filtre, pesquise e gerencie todos os lançamentos</p>
+      </div>
+    </div>
+
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <i class="fas fa-search search-icon"></i>
+        <input class="search-inp" type="text" id="searchInput" placeholder="Buscar descrição, empresa, categoria...">
+        <button class="search-clr" id="searchClearBtn" style="display:none"><i class="fas fa-times"></i></button>
+      </div>
+      <select class="fsel" id="filterMonth"><option value="">Todos os meses</option></select>
+      <select class="fsel" id="filterYear"><option value="">Todos os anos</option></select>
+      <select class="fsel" id="filterCat"><option value="">Todas as categorias</option></select>
+      <select class="fsel" id="filterEmpresa"><option value="">Todas as empresas</option></select>
+      <select class="fsel" id="filterStatus">
+        <option value="">Todos os status</option>
+        <option value="pendente">Pendente</option>
+        <option value="pago">Pago</option>
+      </select>
+      <button class="btn-clear-filters" id="clearFiltersBtn"><i class="fas fa-times"></i> Limpar</button>
+    </div>
+
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-header">
+        <div class="card-header-left"><i class="fas fa-list-ul card-header-icon"></i><h3>Lançamentos</h3></div>
+        <span class="card-meta" id="tableCount"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" data-col="data">Data <i class="fas fa-sort sort-ico"></i></th>
+              <th>Descrição</th>
+              <th class="sortable" data-col="categoria">Categoria <i class="fas fa-sort sort-ico"></i></th>
+              <th>Pagamento</th>
+              <th>Status</th>
+              <th class="sortable" data-col="valor">Valor <i class="fas fa-sort sort-ico"></i></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="expBody">
+            <tr><td colspan="7"><div class="empty-row"><i class="fas fa-inbox"></i>Nenhuma despesa ainda.</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NOVO LANÇAMENTO ── -->
+  <div class="tab-content" id="tab-novo">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Nova Despesa</h1>
+        <p class="page-sub">Registre um novo lançamento financeiro</p>
+      </div>
+    </div>
+
+    <div class="new-exp-layout" style="margin-bottom:28px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><i class="fas fa-plus card-header-icon"></i><h3>Dados do Lançamento</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="cat-preview-wrap" id="catPreview"></div>
+          <button class="btn-manage-cats" id="openCatsBtn"><i class="fas fa-palette"></i> Gerenciar Categorias</button>
+          <form id="expForm" autocomplete="off" novalidate>
+            <div class="form-grid">
+              <div class="fld fld--full">
                 <label>Valor (R$)</label>
                 <input type="number" id="expValue" placeholder="0,00" step="0.01" min="0.01" required inputmode="decimal">
                 <span class="fld-err" id="errValue"></span>
               </div>
-              <div class="fld s2">
+              <div class="fld fld--full">
                 <label>Descrição</label>
                 <input type="text" id="expDesc" placeholder="Ex: Nota fiscal FedEx..." maxlength="120" required>
                 <span class="fld-err" id="errDesc"></span>
               </div>
-              <div class="fld s2">
+              <div class="fld fld--full">
                 <label>Empresa / Fornecedor</label>
                 <input type="text" id="expEmpresa" placeholder="Ex: FedEx, Correios..." maxlength="80">
               </div>
-              <div class="fld s2">
+              <div class="fld fld--full">
                 <label>Categoria</label>
-                <select id="expCategory" required>
-                  <option value="">Selecione...</option>
-                </select>
+                <select id="expCategory" required><option value="">Selecione...</option></select>
                 <span class="fld-err" id="errCategory"></span>
               </div>
               <div class="fld">
@@ -300,28 +419,103 @@
                 </select>
                 <span class="fld-err" id="errPayment"></span>
               </div>
-              <div class="fld s2">
-                <label>Status inicial</label>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--bg2);border-radius:var(--r);border:1.5px solid var(--border);">
-                  <button type="button" class="pay-toggle-track" id="expStatusToggle"></button>
-                  <span style="font-size:13px;font-weight:600;color:var(--ink2);" id="expStatusLabel">Pendente</span>
+              <div class="fld fld--full">
+                <label>Status</label>
+                <div class="status-row">
+                  <button type="button" class="toggle-track" id="expStatusToggle"></button>
+                  <span class="status-label off" id="expStatusLabel">Pendente</span>
                 </div>
               </div>
             </div>
-            <button type="submit" class="btn-primary" id="btnAdd" style="margin-top:8px;"><i class="fas fa-plus"></i> Registrar Despesa</button>
+            <button type="submit" class="btn-primary btn-primary--lg" id="btnAdd"><i class="fas fa-plus"></i> Registrar Despesa</button>
           </form>
         </div>
       </div>
 
-      <!-- EXPORT PDF -->
-      <div class="export-card">
-        <div class="export-hdr">
-          <div class="export-hdr-ico"><i class="fas fa-file-pdf"></i></div>
-          <div class="export-hdr-txt"><h3>Relatório em PDF</h3><p>Exportar despesas do período</p></div>
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left"><i class="fas fa-info-circle card-header-icon"></i><h3>Resumo do Mês</h3></div>
+          </div>
+          <div class="card-body" id="quickSummaryBody"></div>
         </div>
-        <div class="export-body">
-          <div class="export-row">
-            <div class="efld"><label>Mês</label>
+        <div class="card" style="margin-top:14px;">
+          <div class="card-header">
+            <div class="card-header-left"><i class="fas fa-clock card-header-icon"></i><h3>Últimos Registrados</h3></div>
+          </div>
+          <div class="card-body" id="lastAddedBody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ORÇAMENTO ── -->
+  <div class="tab-content" id="tab-orcamento">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Orçamento</h1>
+        <p class="page-sub">Defina limites de gastos e acompanhe o progresso</p>
+      </div>
+      <div class="page-header-actions">
+        <select class="select-sm" id="budgetMonthFilter"><option value="">Mês atual</option></select>
+      </div>
+    </div>
+
+    <div class="budget-layout" style="margin-bottom:28px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><i class="fas fa-bullseye card-header-icon"></i><h3>Metas por Categoria</h3></div>
+          <span class="card-meta" id="budgetSummaryMeta"></span>
+        </div>
+        <div class="card-body" id="budgetListBody">
+          <div class="empty-row"><i class="fas fa-bullseye"></i>Defina orçamentos abaixo para começar.</div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left"><i class="fas fa-plus card-header-icon"></i><h3>Definir Meta</h3></div>
+          </div>
+          <div class="card-body">
+            <div class="fld" style="margin-bottom:12px;"><label>Categoria</label><select id="budgetCategory"></select></div>
+            <div class="fld" style="margin-bottom:16px;"><label>Limite Mensal (R$)</label><input type="number" id="budgetAmount" placeholder="0,00" step="0.01" min="0.01" inputmode="decimal"></div>
+            <button class="btn-primary" id="saveBudgetBtn"><i class="fas fa-save"></i> Salvar Meta</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <div class="card-header">
+            <div class="card-header-left"><i class="fas fa-chart-bar card-header-icon"></i><h3>Resumo Visual</h3></div>
+          </div>
+          <div class="card-body" id="budgetChartWrap">
+            <div class="chart-wrap"><canvas id="budgetChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RELATÓRIOS ── -->
+  <div class="tab-content" id="tab-relatorios">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Relatórios</h1>
+        <p class="page-sub">Gere relatórios detalhados e exporte seus dados</p>
+      </div>
+    </div>
+
+    <div class="reports-layout" style="margin-bottom:28px;">
+      <div class="card report-card">
+        <div class="report-card-header">
+          <div class="report-card-icon"><i class="fas fa-file-pdf"></i></div>
+          <div>
+            <h3>Relatório em PDF</h3>
+            <p>Relatório detalhado com tabela e gráfico de categorias</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="fld">
+              <label>Mês</label>
               <select id="pdfMonth">
                 <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
                 <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
@@ -329,26 +523,89 @@
                 <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
               </select>
             </div>
-            <div class="efld"><label>Ano</label><input type="number" id="pdfYear" min="2020" max="2099"></div>
+            <div class="fld"><label>Ano</label><input type="number" id="pdfYear" min="2020" max="2099"></div>
+            <div class="fld fld--full"><label>Nome da Empresa</label><input type="text" id="pdfCompany" placeholder="BuyBrazil10 Ltda."></div>
           </div>
-          <div class="efld" style="margin-bottom:12px;"><label>Nome da Empresa</label><input type="text" id="pdfCompany" placeholder="BuyBrazil10 Ltda."></div>
-          <div class="eprev" id="exportPreview">
-            <div class="eprev-ttl">Pré-visualização</div>
-            <div class="eprev-row"><span>Período</span><span id="prevPeriod">—</span></div>
-            <div class="eprev-row"><span>Transações</span><span id="prevCount">0</span></div>
-            <div class="eprev-row"><span>Pendente</span><span id="prevPend">R$ 0,00</span></div>
-            <div class="eprev-row hi"><span>Total</span><span id="prevTotal">R$ 0,00</span></div>
+          <div class="export-preview" id="exportPreview">
+            <div class="export-preview-title">Pré-visualização</div>
+            <div class="export-preview-row"><span>Período</span><span id="prevPeriod">—</span></div>
+            <div class="export-preview-row"><span>Lançamentos</span><span id="prevCount">0</span></div>
+            <div class="export-preview-row"><span>Pendente</span><span id="prevPend">R$ 0,00</span></div>
+            <div class="export-preview-row export-preview-row--hi"><span>Total</span><span id="prevTotal">R$ 0,00</span></div>
           </div>
-          <button class="btn-export" id="btnExportPdf"><i class="fas fa-download"></i> Gerar e Baixar PDF</button>
+          <button class="btn-export" id="exportPdfBtn"><i class="fas fa-download"></i> Gerar e Baixar PDF</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><i class="fas fa-calendar-alt card-header-icon"></i><h3>Análise Anual</h3></div>
+          <select class="select-sm" id="annualYearFilter"></select>
+        </div>
+        <div class="card-body">
+          <div class="chart-wrap" style="height:220px;"><canvas id="annualChart"></canvas></div>
+          <div class="annual-summary" id="annualSummary"></div>
+        </div>
+      </div>
+
+      <div class="card report-card">
+        <div class="report-card-header">
+          <div class="report-card-icon report-card-icon--green"><i class="fas fa-file-csv"></i></div>
+          <div>
+            <h3>Exportar CSV</h3>
+            <p>Baixe todos os dados para usar no Excel ou Google Sheets</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="fld"><label>De</label><input type="date" id="csvDateFrom"></div>
+            <div class="fld"><label>Até</label><input type="date" id="csvDateTo"></div>
+          </div>
+          <button class="btn-export btn-export--green" id="exportCsvBtn"><i class="fas fa-download"></i> Baixar CSV</button>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+</main>
+
+<!-- TOAST -->
+<div id="toast"><i></i><span id="toastMsg"></span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/gastos.js"></script>
+<script src="gastos.js"></script>
+<script>
+  // ── THEME ──
+  function applyTheme(dark) {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon)  icon.className  = dark ? 'fas fa-sun' : 'fas fa-moon';
+    if (label) label.textContent = dark ? 'Modo Claro' : 'Modo Escuro';
+    localStorage.setItem('bb_theme', dark ? 'dark' : 'light');
+    if (typeof updateChartTheme === 'function') updateChartTheme();
+  }
+  document.getElementById('sidebarThemeBtn').addEventListener('click', function () {
+    applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+  });
+  applyTheme(localStorage.getItem('bb_theme') === 'dark');
+
+  // ── MOBILE SIDEBAR TOGGLE ──
+  const sidebar   = document.getElementById('sidebar');
+  const overlay   = document.getElementById('sidebarOverlay');
+  const menuBtn   = document.getElementById('mobileMenuBtn');
+  function openSidebar()  { sidebar.classList.add('open');  overlay.classList.add('show');  document.body.style.overflow = 'hidden'; }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); document.body.style.overflow = ''; }
+  menuBtn.addEventListener('click', openSidebar);
+  overlay.addEventListener('click', closeSidebar);
+  // Close sidebar on nav-tab click (mobile)
+  document.querySelectorAll('.nav-tab').forEach(btn => {
+    btn.addEventListener('click', () => { if (window.innerWidth < 768) closeSidebar(); });
+  });
+
+  // ── PATCH: headerUserEmail used in loadProfile ──
+  // gastos.js uses 'dropEmail' id to set email – also sync sidebar email display
+  const _origLoadProfile = window.loadProfile;
+</script>
 </body>
 </html>
