@@ -6,8 +6,8 @@
    DESIGN TOKENS — LIGHT
 ══════════════════════════════════════════════ */
 :root {
-  --font: 'DM Sans', system-ui, sans-serif;
-  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font: 'Inter', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
 
   /* Brand */
   --accent:       #059669;
