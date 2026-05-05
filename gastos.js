@@ -24,8 +24,8 @@ function getBarColors(data) {
   };
 }
 
-const SB_URL = 'https://dggxhpjevvixiwtflnar.supabase.co';
-const SB_KEY = 'sb_publishable_1ZM1iv0lxkSCSlfkCsyG7w_xZfaQ1fM';
+const SB_URL = 'https://yejbcsbljtizuirmfmvt.supabase.co';
+const SB_KEY = 'sb_publishable_c9oUPgrMfIeinloB372tpQ_bMAqy7oi';
 
 const DEFAULT_CATS = [
   {name:'1000.01 - MATRIZ VENDEDORES',color:'#0891b2',icon:''},{name:'1000.02 - BUY BRAZIL VIRTUAL',color:'#0e7490',icon:''},{name:'1000.03 - BELAWAYS B2B',color:'#0284c7',icon:''},{name:'1000.04 - AJUSTE CONTAS',color:'#0369a1',icon:''},{name:'1000.05 - BELAWAYS BR VIRTUAL',color:'#075985',icon:''},{name:'1000.06 - MERCADO LIVRE',color:'#f59e0b',icon:''},{name:'1000.07 - AMAZON BR',color:'#ea580c',icon:''},{name:'1000.08 - MAGALU MKT',color:'#ec4899',icon:''},{name:'1001.01 - COMPRA SÓCIOS',color:'#0891b2',icon:''},

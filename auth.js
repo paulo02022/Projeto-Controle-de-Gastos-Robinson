@@ -1,7 +1,7 @@
 'use strict';
 
-const SUPABASE_URL = 'https://dggxhpjevvixiwtflnar.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_1ZM1iv0lxkSCSlfkCsyG7w_xZfaQ1fM';
+const SUPABASE_URL = 'https://yejbcsbljtizuirmfmvt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_c9oUPgrMfIeinloB372tpQ_bMAqy7oi';
 
 window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
