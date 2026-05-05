@@ -94,17 +94,23 @@ if (loginForm) {
     submitBtn.disabled = true;
     submitBtn.innerText = 'Entrando...';
 
-    const { error } = await window.supabaseClient.auth.signInWithPassword({
-      email: emailEl.value.trim(),
-      password: passwordEl.value,
-    });
+    try {
+      const { error } = await window.supabaseClient.auth.signInWithPassword({
+        email: emailEl.value.trim(),
+        password: passwordEl.value,
+      });
 
-    if (error) {
-      alert(`Erro: ${error.message}`);
+      if (error) {
+        alert(`Erro: ${error.message}`);
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Entrar';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } catch (err) {
+      alert('Erro de rede: Não foi possível se conectar ao servidor do Supabase. Verifique sua conexão e a URL configurada.');
       submitBtn.disabled = false;
       submitBtn.innerText = 'Entrar';
-    } else {
-      window.location.href = 'dashboard.html';
     }
   });
 }
