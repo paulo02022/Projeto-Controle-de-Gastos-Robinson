@@ -57,19 +57,25 @@ if (registerForm) {
     submitBtn.disabled = true;
     submitBtn.innerText = 'Cadastrando...';
 
-    const { error } = await window.supabaseClient.auth.signUp({
-      email,
-      password,
-      options: { data: { username } },
-    });
+    try {
+      const { error } = await window.supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { username } },
+      });
 
-    if (error) {
-      alert(error.message);
+      if (error) {
+        alert(`Erro ao criar conta: ${error.message}`);
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Cadastrar';
+      } else {
+        alert('Sucesso! Confirme seu e-mail para ativar a conta.');
+        window.location.href = 'index.html';
+      }
+    } catch (err) {
+      alert('Erro de conexão. Verifique sua internet, se o projeto Supabase está ativo ou se a sua URL/Chave estão corretas.');
       submitBtn.disabled = false;
       submitBtn.innerText = 'Cadastrar';
-    } else {
-      alert('Sucesso! Confirme seu e-mail para ativar a conta.');
-      window.location.href = 'index.html';
     }
   });
 }
